@@ -27,7 +27,7 @@ class RecipesController < ApplicationController
             message: "Recipe creation failed!",
             required: "title, making_time, serves, ingredients, cost"
         }
-        render json: error, status: 404 and return unless required_fields.all? { |f| params.has_key?(f) }
+        render json: error, status: 200 and return unless required_fields.all? { |f| params.has_key?(f) }
 
         # create model
         recipe = Recipe.new(
@@ -38,6 +38,14 @@ class RecipesController < ApplicationController
             cost: params[:cost]
         )
         recipe.save
+        recipe = Recipe.find_by(id: recipe.id)
+        recipe.update!(
+            title: params[:title],
+            making_time: params[:making_time],
+            serves: params[:serves],
+            ingredients: params[:ingredients],
+            cost: params[:cost]
+        )
         message = {
             message: "Recipe successfully created!",
             recipe: [recipe.json_all]
